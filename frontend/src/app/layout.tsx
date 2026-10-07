@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Barlow } from 'next/font/google';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { CartProvider } from '@/components/CartProvider';
 import { SITE_NAME, SITE_URL } from '@/lib/config';
 import './globals.css';
 
@@ -26,9 +27,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={barlow.variable}>
       <body>
         <a href="#main" className="skip-link">Skip to content</a>
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
+        <CartProvider>
+          <Header />
+          <main id="main">{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

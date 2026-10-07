@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/types";
+import { AddToCartButton } from "@/components/AddToCartButton";
 
 interface Props {
   product: Product;
@@ -122,6 +123,11 @@ export function ProductCard({ product, priority }: Props) {
           </svg>
         </label>
       </div>
+      <AddToCartButton
+        product={{ id: product.id, slug: product.slug, title: product.title, price: product.price }}
+        inStock={product.inStock}
+        className="card__add"
+      />
     </article>
   );
 }

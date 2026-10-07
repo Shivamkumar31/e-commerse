@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { AddToCartButton } from '@/components/AddToCartButton';
 import { ApiError, getProduct } from '@/lib/api';
 import { SITE_NAME, SITE_URL } from '@/lib/config';
 import { formatPrice } from '@/lib/format';
@@ -93,6 +94,7 @@ export default async function ProductPage({ params }: Props) {
               Rated {product.rating.rate.toFixed(1)} out of 5 from {product.rating.count} reviews
             </p>
           )}
+          <AddToCartButton product={{ id: product.id, slug: product.slug, title: product.title, price: product.price }} inStock={product.inStock} />
           <Link className="btn" href="/">Continue shopping</Link>
         </div>
       </article>
