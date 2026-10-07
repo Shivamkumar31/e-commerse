@@ -16,6 +16,13 @@ import { categoriesRouter } from './modules/categories/categories.routes';
 export function createApp() {
   const app = express();
 
+  app.get("/health", (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "appscrip-plp-backend",
+  });
+});
+
   // helmet adds security headers. cross-origin resource policy is relaxed so the frontend domain can load our images.
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' }, contentSecurityPolicy: false }));
 
