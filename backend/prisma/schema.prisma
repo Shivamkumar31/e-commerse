@@ -1,0 +1,54 @@
+// Prisma schema = single source of truth for the DB structure.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Category: one row per product category (filter + breadcrumb source).
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  slug     String    @unique // URL-safe name used in ?category=<slug>
+  products Product[]
+}
+
+// Product: the main table queried by GET /products.
+model Product {
+  id          Int            @id @default(autoincrement())
+  slug        String         @unique
+  title       String
+  description String
+  price       Decimal        @db.Decimal(10, 2) // Decimal avoids float rounding errors for money
+  ratingRate  Float          @default(0)
+  ratingCount Int            @default(0)
+  inStock     Boolean        @default(true)
+  isNew       Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  categoryId  Int
+  category    Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  images      ProductImage[]
+
+  // Indexes: one per filter/sort the API supports so Postgres avoids full scans.
+  @@index([categoryId, price]) // category filter + price sort/range together
+  @@index([price])             // price range + price sort without category
+  @@index([ratingRate])        // "recommended" sort
+  @@index([ratingCount])       // "popular" sort
+  @@index([createdAt])         // "newest" sort
+  @@index([inStock])           // availability filter
+}
+
+// ProductImage: separate table so a product can have many images.
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  url       String  // relative path like /images/<seo-name>.jpg
+  alt       String  // meaningful alt text for SEO + accessibility
+  position  Int     @default(0)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
